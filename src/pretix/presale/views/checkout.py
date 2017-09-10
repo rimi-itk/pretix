@@ -1,7 +1,9 @@
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import View
 
 from pretix.base.models import CartPosition
@@ -12,6 +14,7 @@ from pretix.presale.checkoutflow import get_checkout_flow
 from pretix.presale.views.cart import get_or_create_cart_id
 
 
+@method_decorator(xframe_options_exempt, 'dispatch')
 class CheckoutView(View):
     def dispatch(self, request, *args, **kwargs):
 
