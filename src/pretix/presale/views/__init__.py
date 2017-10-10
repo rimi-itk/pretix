@@ -127,9 +127,11 @@ class CartMixin:
         try:
             first_expiry = min(p.expires for p in positions) if positions else now()
             minutes_left = max(first_expiry - now(), timedelta()).seconds // 60
+            seconds_left = max(first_expiry - now(), timedelta()).seconds % 60
         except AttributeError:
             first_expiry = None
             minutes_left = None
+            seconds_left = None
 
         return {
             'positions': positions,
@@ -140,6 +142,7 @@ class CartMixin:
             'fees': fees,
             'answers': answers,
             'minutes_left': minutes_left,
+            'seconds_left': seconds_left,
             'first_expiry': first_expiry,
         }
 
