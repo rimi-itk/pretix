@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from rest_framework import serializers
 
@@ -39,12 +41,24 @@ class SerializerDescriptionField(serializers.Field):
             d = {
                 'name': k,
                 'required': v.required,
+                'type': self.get_field_type_name(v)
             }
             if isinstance(v, serializers.ChoiceField):
                 d['choices'] = list(v.choices.keys())
             fields.append(d)
 
         return fields
+
+    def get_field_type_name(self, v):
+        """Get type name for a field."""
+        type_object = v.form_field if hasattr(v, 'form_field') else v
+        type_class_name = type_object.__class__.__name__
+        # Remove trailing `Field`
+        type_name = re.sub(r'Field$', '', type_class_name)
+        # Convert from CamelCase to snake_case.
+        type_name = re.sub(r'(?<!^)(?=[A-Z])', '_', type_name).lower()
+
+        return type_name
 
 
 class ExporterSerializer(serializers.Serializer):
